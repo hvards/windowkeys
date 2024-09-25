@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows10.0.20348.0</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<GenerateSatelliteAssembliesForCore>true</GenerateSatelliteAssembliesForCore>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Forms\OverlayForm.cs">
+	    <SubType>Form</SubType>
+	  </Compile>
+	</ItemGroup>
+
+</Project>

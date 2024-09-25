@@ -1,0 +1,10 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+	<Package Name="WindowKeys" Manufacturer="hvard" Version="1.0.0" UpgradeCode="06775890-4a41-4863-91d4-f410b799ef7b">
+		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+		<MediaTemplate EmbedCab="yes" />
+		<Feature Id="Main">
+			<ComponentGroupRef Id="AppComponents" />
+		</Feature>
+	</Package>
+</Wix>
