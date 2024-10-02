@@ -69,8 +69,9 @@ public class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 
 			var title = GetWindowTitle(hWnd);
 			if (string.IsNullOrEmpty(title)) continue;
-			if (title is "Program Manager" or "Windows Input Experience") continue;
-			if (!GetWindowRectangle(hWnd, out var rect)) continue;
+			if (title is "Program Manager" or "Windows Input Experience" or "Default IME" or "MSCTFIME UI")
+				continue;
+			if (!GetWindowRectangle(hWnd, out var rect) || rect.Size < 2500) continue;
 			if (visibleWindows.Any(x => Geometry.IsRectInside(x.Rect, rect))) continue;
 
 			visibleWindows.Add(new Window { Rect = rect, Handle = hWnd, InsertAfter = prevhWnd });

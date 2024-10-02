@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Moq;
 using WindowKeys;
 using WindowKeys.Interfaces;
@@ -24,7 +25,8 @@ public class KeyboardEventHandlerTests
 
 		_settings = new ActivationSettings { HotKey = [90] };
 
-		_subject = new KeyboardEventHandler(_nativeHelper.Object, _windowHandler.Object, Options.Create(_settings));
+		_subject = new KeyboardEventHandler(_nativeHelper.Object, _windowHandler.Object, Options.Create(_settings),
+			new NullLogger<KeyboardEventHandler>());
 	}
 
 	[Test]

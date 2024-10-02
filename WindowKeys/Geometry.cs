@@ -7,9 +7,9 @@ public class Geometry(INativeHelper nativeHelper) : IGeometry
 {
 	public static bool IsRectInside(RECT outer, RECT inner)
 	{
-		const int margin = 10;
+		const int margin = 25;
 		return inner.Left > outer.Left - margin && inner.Top > outer.Top - margin &&
-			   inner.Right < outer.Right + margin && inner.Bottom <= outer.Bottom + margin;
+			   inner.Right < outer.Right + margin && inner.Bottom < outer.Bottom + margin;
 	}
 
 	public bool TryGetActivationStringPosition(RECT rect, nint handle, Size textSize, out Point point)

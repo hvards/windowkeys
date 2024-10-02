@@ -21,7 +21,7 @@ public class GeometryTests
 	public void InnerPartiallyOutsideOuter_ReturnsFalse()
 	{
 		var outer = new RECT { Left = 10, Top = 10, Right = 50, Bottom = 50 };
-		var inner = new RECT { Left = 0, Top = 0, Right = 40, Bottom = 40 };
+		var inner = new RECT { Left = -20, Top = -20, Right = 40, Bottom = 40 };
 
 		var result = Geometry.IsRectInside(outer, inner);
 
@@ -42,7 +42,7 @@ public class GeometryTests
 	[Test]
 	public void InnerWithNegativeCoordinates_ReturnsFalse()
 	{
-		var outer = new RECT { Left = 10, Top = 10, Right = 50, Bottom = 50 };
+		var outer = new RECT { Left = 30, Top = 30, Right = 60, Bottom = 60 };
 		var inner = new RECT { Left = -10, Top = -10, Right = 30, Bottom = 30 };
 
 		var result = Geometry.IsRectInside(outer, inner);

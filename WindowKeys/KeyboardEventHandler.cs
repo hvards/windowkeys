@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using WindowKeys.Interfaces;
 using WindowKeys.Native;
 using WindowKeys.Settings;
@@ -9,7 +10,8 @@ namespace WindowKeys;
 public class KeyboardEventHandler(
 	INativeHelper nativeHelper,
 	IWindowHandler windowHandler,
-	IOptions<ActivationSettings> activationSettings)
+	IOptions<ActivationSettings> activationSettings,
+	ILogger<KeyboardEventHandler> logger)
 	: IKeyboardEventHandler
 {
 	private readonly ActivationSettings _activationSettings = activationSettings.Value;
@@ -29,6 +31,8 @@ public class KeyboardEventHandler(
 		var keyDown = wParam is WM_KEYDOWN or WM_SYSKEYDOWN;
 		var keyUp = wParam is WM_KEYUP or WM_SYSKEYUP;
 		var vkCode = lParam.wVk;
+
+		logger.LogDebug("Keyboard event received: {Key} {Event}.", ((Keys)vkCode).ToString(), keyDown ? "Down" : "Up");
 
 		if (!_active)
 		{

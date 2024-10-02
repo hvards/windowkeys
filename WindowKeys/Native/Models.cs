@@ -8,6 +8,7 @@ public struct RECT
 	public int Top;
 	public int Right;
 	public int Bottom;
+	public int Size => (Right - Left) * (Bottom - Top);
 }
 
 [StructLayout(LayoutKind.Sequential)]
