@@ -7,7 +7,7 @@ using static WindowKeys.Native.Constants;
 
 namespace WindowKeys;
 
-public class KeyboardEventHandler(
+public partial class KeyboardEventHandler(
 	INativeHelper nativeHelper,
 	IWindowHandler windowHandler,
 	IOptions<ActivationSettings> activationSettings,
@@ -32,7 +32,7 @@ public class KeyboardEventHandler(
 		var keyUp = wParam is WM_KEYUP or WM_SYSKEYUP;
 		var vkCode = lParam.wVk;
 
-		logger.LogDebug("Keyboard event received: {Key} {Event}.", ((Keys)vkCode).ToString(), keyDown ? "Down" : "Up");
+		LogKeyboardEventReceived(vkCode, keyDown);
 
 		if (!_active)
 		{
@@ -68,4 +68,7 @@ public class KeyboardEventHandler(
 	{
 		_ = nativeHelper.UnhookKeyboardHook(_hookId);
 	}
+
+	[LoggerMessage(LogLevel.Debug, Message = "Keyboard event received: {key}, Down: {down}.")]
+	private partial void LogKeyboardEventReceived(uint key, bool down);
 }

@@ -7,7 +7,7 @@ using WindowKeys.Settings;
 
 namespace WindowKeys;
 
-public class WindowHandler(
+public partial class WindowHandler(
 	INativeHelper nativeHelper,
 	ICombinationGenerator combinationGenerator,
 	IGeometry geometry,
@@ -63,6 +63,9 @@ public class WindowHandler(
 		}
 
 		if (sw.Elapsed.TotalMilliseconds > 200)
-			logger.LogInformation("Displaying {Count} windows after {Milliseconds}ms", Windows.Count, sw.Elapsed.TotalMilliseconds);
+			LogDisplayWindowsElapsedTime(Windows.Count, sw.Elapsed.TotalMilliseconds);
 	}
+
+	[LoggerMessage(LogLevel.Information, "Displaying {count} windows after {milliSeconds}ms")]
+	private partial void LogDisplayWindowsElapsedTime(int count, double milliSeconds);
 }

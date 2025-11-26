@@ -8,7 +8,7 @@ using static WindowKeys.Native.Constants;
 
 namespace WindowKeys;
 
-public class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
+public partial class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 {
 	private LowLevelKeyboardProc? _proc;
 
@@ -78,7 +78,7 @@ public class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 		}
 
 		if (sw.ElapsedMilliseconds > 100)
-			logger.LogInformation("GetWindowsInZOrder took {ElapsedMilliseconds}ms", sw.ElapsedMilliseconds);
+			LogGetWidnowsInZOrderElapsedTime(sw.ElapsedMilliseconds);
 
 		return visibleWindows;
 	}
@@ -127,6 +127,10 @@ public class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 		_ = GetWindowText(hWnd, sb, sb.Capacity);
 		return sb.ToString();
 	}
+
+
+	[LoggerMessage(LogLevel.Information, "GetWindowsInZOrder took {milliSeconds}ms")]
+	private partial void LogGetWidnowsInZOrderElapsedTime(long milliSeconds);
 
 	#region NativeMethods
 	[DllImport("user32.dll")]
