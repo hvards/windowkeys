@@ -9,6 +9,7 @@
 		<Nullable>enable</Nullable>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<GenerateSatelliteAssembliesForCore>true</GenerateSatelliteAssembliesForCore>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>

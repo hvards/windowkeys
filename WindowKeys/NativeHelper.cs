@@ -86,7 +86,7 @@ public partial class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 	public void ClickKey(ushort vk, nint? action) => SendKeyboardInput(GetKeyboardInputArr(vk, action: action));
 
 	private static void SendKeyboardInput(Input[] kbInputs) =>
-		_ = SendInput((uint)kbInputs.Length, kbInputs, Marshal.SizeOf(typeof(Input)));
+		_ = SendInput((uint)kbInputs.Length, kbInputs, Marshal.SizeOf<Input>());
 
 	private static Input[] GetKeyboardInputArr(ushort vk, ushort modifier = 0, nint? action = null) => action == null
 		? modifier == 0
@@ -103,11 +103,7 @@ public partial class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 		type = (int)InputType.Keyboard,
 		u = new InputUnion
 		{
-			ki = new KeyboardInput
-			{
-				wVk = vk,
-				dwFlags = (ushort)(down ? KeyEventF.KeyDown : KeyEventF.KeyUp)
-			}
+			ki = new KeyboardInput { wVk = vk, dwFlags = (ushort)(down ? KeyEventF.KeyDown : KeyEventF.KeyUp) }
 		}
 	};
 
@@ -133,59 +129,66 @@ public partial class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 	private partial void LogGetWidnowsInZOrderElapsedTime(long milliSeconds);
 
 	#region NativeMethods
-	[DllImport("user32.dll")]
-	private static extern nint SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, nint hMod, uint dwThreadId);
 
-	[DllImport("user32.dll")]
-	private static extern bool UnhookWindowsHookEx(nint hhk);
+	[LibraryImport("user32.dll", EntryPoint = "SetWindowsHookExW")]
+	private static partial nint SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, nint hMod, uint dwThreadId);
 
-	[DllImport("user32.dll")]
-	private static extern nint CallNextHookEx(nint hhk, int nCode, nint wParam, ref KeyboardInput lParam);
+	[LibraryImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool UnhookWindowsHookEx(nint hhk);
 
-	[DllImport("user32.dll")]
-	private static extern nint GetTopWindow(nint hWnd);
+	[LibraryImport("user32.dll")]
+	private static partial nint CallNextHookEx(nint hhk, int nCode, nint wParam, ref KeyboardInput lParam);
 
-	[DllImport("user32.dll")]
-	private static extern bool GetWindowRect(nint hWnd, out RECT lpRect);
+	[LibraryImport("user32.dll")]
+	private static partial nint GetTopWindow(nint hWnd);
+
+	[LibraryImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool GetWindowRect(nint hWnd, out RECT lpRect);
 
 	[DllImport("user32.dll", CharSet = CharSet.Unicode)]
 	private static extern int GetWindowText(nint hWnd, StringBuilder lpString, int nMaxCount);
 
-	[DllImport("user32.dll")]
-	private static extern int GetWindowTextLength(nint hWnd);
+	[LibraryImport("user32.dll", EntryPoint = "GetWindowTextLengthW")]
+	private static partial int GetWindowTextLength(nint hWnd);
 
-	[DllImport("user32.dll")]
-	private static extern bool IsWindowVisible(nint hWnd);
+	[LibraryImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool IsWindowVisible(nint hWnd);
 
-	[DllImport("user32.dll")]
-	private static extern nint GetWindow(nint hWnd, uint uCmd);
+	[LibraryImport("user32.dll")]
+	private static partial nint GetWindow(nint hWnd, uint uCmd);
 
-	[DllImport("user32.dll")]
-	private static extern nint GetForegroundWindow();
+	[LibraryImport("user32.dll")]
+	private static partial nint GetForegroundWindow();
 
-	[DllImport("user32.dll")]
-	private static extern bool SetForegroundWindow(nint hWnd);
+	[LibraryImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool SetForegroundWindow(nint hWnd);
 
-	[DllImport("user32.dll")]
-	private static extern bool AttachThreadInput(nint idAttach, nint idAttachTo, bool fAttach);
+	[LibraryImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool AttachThreadInput(nint idAttach, nint idAttachTo, [MarshalAs(UnmanagedType.Bool)] bool fAttach);
 
-	[DllImport("User32.dll")]
-	private static extern nint GetWindowThreadProcessId(nint hwnd, nint lpdwProcessId);
+	[LibraryImport("User32.dll")]
+	private static partial nint GetWindowThreadProcessId(nint hwnd, nint lpdwProcessId);
 
-	[DllImport("user32.dll")]
-	private static extern uint SendInput(uint nInputs, Input[] pInputs, int cbSize);
+	[LibraryImport("user32.dll")]
+	private static partial uint SendInput(uint nInputs, Input[] pInputs, int cbSize);
 
-	[DllImport("user32.dll")]
-	private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy,
+	[LibraryImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	private static partial bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy,
 		uint uFlags);
 
 	[DllImport("user32.dll")]
 	private static extern IntPtr WindowFromPoint(Point p);
 
-	[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-	private static extern nint GetModuleHandle(string lpModuleName);
+	[LibraryImport("kernel32.dll", EntryPoint = "GetModuleHandleW", StringMarshalling = StringMarshalling.Utf16)]
+	private static partial nint GetModuleHandle(string lpModuleName);
 
-	[DllImport("dwmapi.dll")]
-	private static extern int DwmGetWindowAttribute(nint hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
+	[LibraryImport("dwmapi.dll")]
+	private static partial int DwmGetWindowAttribute(nint hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
 	#endregion
 }
