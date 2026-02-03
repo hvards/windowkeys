@@ -1,4 +1,4 @@
-﻿using WindowKeys.Interfaces;
+using WindowKeys.Interfaces;
 using WindowKeys.Settings;
 using WindowKeys.Native;
 
@@ -10,15 +10,18 @@ public class OverlayForm : Form
 	private readonly IGeometry _geometry;
 	private readonly string _activationString;
 	private readonly RECT _rect;
+	private readonly IReadOnlyList<RECT> _occludingRects;
 
 	private const int BORDER_MARGIN = 16;
 
-	public OverlayForm(RECT rect, string activationString, OverlaySettings settings, IGeometry geometry)
+	public OverlayForm(RECT rect, string activationString, OverlaySettings settings, IGeometry geometry,
+		IReadOnlyList<RECT> occludingRects)
 	{
 		_settings = settings;
 		_geometry = geometry;
 		_activationString = activationString;
 		_rect = rect;
+		_occludingRects = occludingRects;
 
 		SetFormAppearanceAndPosition();
 	}
@@ -57,12 +60,12 @@ public class OverlayForm : Form
 	{
 		using var font = new Font(_settings.FontFamily, _settings.FontSize);
 		var size = graphics.MeasureString(_activationString, font).ToSize();
-		if (!_geometry.TryGetActivationStringPosition(_rect, Handle, size,
-				out var position)) return;
+		var position = _geometry.GetActivationStringPosition(_rect, _occludingRects, size);
+		if (position == null) return;
 
 		var location = new Point(
-			position.X - Location.X - size.Width / 2,
-			position.Y - Location.Y - size.Height / 2);
+			position.Value.X - Location.X - size.Width / 2,
+			position.Value.Y - Location.Y - size.Height / 2);
 
 		var rectangle = new Rectangle(location, size);
 		var textPosition = new PointF(
