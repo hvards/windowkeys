@@ -1,10 +1,73 @@
-﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
-	<Package Name="WindowKeys" Manufacturer="hvard" Version="1.0.0" UpgradeCode="06775890-4a41-4863-91d4-f410b799ef7b">
-		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
 
-		<MediaTemplate EmbedCab="yes" />
-		<Feature Id="Main">
-			<ComponentGroupRef Id="AppComponents" />
-		</Feature>
-	</Package>
+    <Package Name="WindowKeys"
+             Manufacturer="hvard"
+             Version="$(WindowKeysVersion)"
+             UpgradeCode="06775890-4a41-4863-91d4-f410b799ef7b"
+             Scope="perMachine"
+             InstallerVersion="500">
+
+        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+        <MediaTemplate EmbedCab="yes" />
+
+        <StandardDirectory Id="ProgramFiles64Folder">
+            <Directory Id="INSTALLFOLDER" Name="WindowKeys" />
+        </StandardDirectory>
+
+        <!-- Harvest all files from publish output into a named component group -->
+        <ComponentGroup Id="PublishedFiles" Directory="INSTALLFOLDER">
+            <Files Include="!(bindpath.WindowKeys)\**">
+                <Exclude Files="!(bindpath.WindowKeys)\**\*.pdb" />
+            </Files>
+        </ComponentGroup>
+
+        <ComponentGroup Id="ScheduledTaskFiles" Directory="INSTALLFOLDER">
+            <Component Id="TaskXmlFile" Guid="7E8A9B0C-D1E2-3456-F789-012345678901">
+                <File Id="WindowKeysTaskXml" Source="WindowKeysTask.xml" KeyPath="yes" />
+            </Component>
+        </ComponentGroup>
+
+        <!-- Create scheduled task using XML import (uses BUILTIN\Users group - works on all devices) -->
+        <SetProperty Id="CreateScheduledTask"
+                     Value="&quot;schtasks.exe&quot; /Create /TN &quot;WindowKeys $(WindowKeysVersion)&quot; /XML &quot;[INSTALLFOLDER]WindowKeysTask.xml&quot; /F"
+                     Before="CreateScheduledTask"
+                     Sequence="execute"
+                     Condition="NOT Installed" />
+
+        <CustomAction Id="CreateScheduledTask"
+                      Execute="deferred"
+                      Impersonate="no"
+                      Return="check"
+                      BinaryRef="Wix4UtilCA_X64"
+                      DllEntry="WixQuietExec64" />
+
+        <!-- Remove scheduled task on uninstall -->
+        <SetProperty Id="RemoveScheduledTask"
+                     Value="&quot;schtasks.exe&quot; /Delete /TN &quot;WindowKeys $(WindowKeysVersion)&quot; /F"
+                     Before="RemoveScheduledTask"
+                     Sequence="execute"
+                     Condition="REMOVE=&quot;ALL&quot;" />
+
+        <CustomAction Id="RemoveScheduledTask"
+                      Execute="deferred"
+                      Impersonate="no"
+                      Return="ignore"
+                      BinaryRef="Wix4UtilCA_X64"
+                      DllEntry="WixQuietExec64" />
+
+        <!-- Schedule the custom actions -->
+        <InstallExecuteSequence>
+            <Custom Action="CreateScheduledTask" After="InstallFiles" Condition="NOT Installed" />
+            <Custom Action="RemoveScheduledTask" Before="RemoveFiles" Condition="REMOVE=&quot;ALL&quot;" />
+        </InstallExecuteSequence>
+
+        <Feature Id="MainFeature" Title="WindowKeys" Level="1">
+            <ComponentGroupRef Id="PublishedFiles" />
+            <ComponentGroupRef Id="ScheduledTaskFiles" />
+        </Feature>
+
+    </Package>
 </Wix>
