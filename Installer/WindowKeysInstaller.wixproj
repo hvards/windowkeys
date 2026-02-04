@@ -1,22 +1,21 @@
-<Project Sdk="WixToolset.Sdk/5.0.2">
-    <PropertyGroup>
-        <WindowKeysVersion Condition="'$(WindowKeysVersion)' == ''">1.0.0</WindowKeysVersion>
-        <OutputType>Package</OutputType>
-        <OutputName>WindowKeys-$(WindowKeysVersion)-x64</OutputName>
-        <InstallerPlatform>x64</InstallerPlatform>
-        <DefineConstants>WindowKeysVersion=$(WindowKeysVersion)</DefineConstants>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="WixToolset.Util.wixext" Version="5.0.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\WindowKeys\WindowKeys.csproj">
-            <Publish>true</Publish>
-            <Configuration>Release</Configuration>
-            <Platform>x64</Platform>
-            <Properties>RuntimeIdentifier=win-x64</Properties>
-        </ProjectReference>
-    </ItemGroup>
+﻿<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+	<WindowKeysVersion Condition="'$(WindowKeysVersion)' == ''">1.0.0</WindowKeysVersion>
+    <OutputType>Package</OutputType>
+    <OutputName>WindowKeys-$(WindowKeysVersion)-x64</OutputName>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <DefineConstants>WindowKeysVersion=$(WindowKeysVersion)</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.2" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WindowKeys\WindowKeys.csproj">
+      <Publish>true</Publish>
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+      <Properties>RuntimeIdentifier=win-x64</Properties>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

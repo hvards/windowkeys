@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
-     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
 
     <Package Name="WindowKeys"
              Manufacturer="hvard"
@@ -30,7 +31,7 @@
             </Component>
         </ComponentGroup>
 
-        <!-- Create scheduled task using XML import (uses BUILTIN\Users group - works on all devices) -->
+        <!-- Create scheduled task using XML import -->
         <SetProperty Id="CreateScheduledTask"
                      Value="&quot;schtasks.exe&quot; /Create /TN &quot;WindowKeys $(WindowKeysVersion)&quot; /XML &quot;[INSTALLFOLDER]WindowKeysTask.xml&quot; /F"
                      Before="CreateScheduledTask"
@@ -68,6 +69,10 @@
             <ComponentGroupRef Id="PublishedFiles" />
             <ComponentGroupRef Id="ScheduledTaskFiles" />
         </Feature>
+
+        <ui:WixUI Id="WixUI_Minimal" />
+        <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+        <Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="A scheduled task has been created that will start WindowKeys automatically when you log on." />
 
     </Package>
 </Wix>
