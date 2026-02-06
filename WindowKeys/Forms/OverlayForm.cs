@@ -8,7 +8,7 @@ public class OverlayForm : Form
 {
 	private readonly OverlaySettings _settings;
 	private readonly IGeometry _geometry;
-	private readonly string _activationString;
+	private string _activationString;
 	private readonly RECT _rect;
 	private readonly IReadOnlyList<RECT> _occludingRects;
 
@@ -24,6 +24,16 @@ public class OverlayForm : Form
 		_occludingRects = occludingRects;
 
 		SetFormAppearanceAndPosition();
+	}
+
+	protected override CreateParams CreateParams
+	{
+		get
+		{
+			var cp = base.CreateParams;
+			cp.ExStyle |= 0x08000000; // WS_EX_NOACTIVATE 
+			return cp;
+		}
 	}
 
 	private void SetFormAppearanceAndPosition()
@@ -56,8 +66,15 @@ public class OverlayForm : Form
 		graphics.DrawRectangle(pen, rectangle);
 	}
 
+	public void UpdateActivationString(string activationString)
+	{
+		_activationString = activationString;
+		Invalidate();
+	}
+
 	private void DrawActivationString(Graphics graphics)
 	{
+		if (_settings.FontSize <= 0) return;
 		using var font = new Font(_settings.FontFamily, _settings.FontSize);
 		var size = graphics.MeasureString(_activationString, font).ToSize();
 		var position = _geometry.GetActivationStringPosition(_rect, _occludingRects, size);

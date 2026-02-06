@@ -33,6 +33,7 @@ public partial class WindowHandler(
 					nativeHelper.FocusHandle(window.Handle);
 					return false;
 				}
+				window.OverlayForm?.UpdateActivationString(window.ActivationString[input.Length..]);
 				match = true;
 				continue;
 			}
