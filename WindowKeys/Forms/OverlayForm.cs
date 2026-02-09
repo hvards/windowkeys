@@ -8,22 +8,35 @@ public class OverlayForm : Form
 {
 	private readonly OverlaySettings _settings;
 	private readonly IGeometry _geometry;
-	private string _activationString;
-	private readonly RECT _rect;
-	private readonly IReadOnlyList<RECT> _occludingRects;
+	private string _activationString = string.Empty;
+	private RECT _rect;
+	private IReadOnlyList<RECT> _occludingRects = [];
 
 	private const int BORDER_MARGIN = 16;
 
-	public OverlayForm(RECT rect, string activationString, OverlaySettings settings, IGeometry geometry,
-		IReadOnlyList<RECT> occludingRects)
+	public OverlayForm(OverlaySettings settings, IGeometry geometry)
 	{
 		_settings = settings;
 		_geometry = geometry;
-		_activationString = activationString;
+
+		FormBorderStyle = FormBorderStyle.None;
+		StartPosition = FormStartPosition.Manual;
+		ShowInTaskbar = false;
+		BackColor = Color.Black;
+		Opacity = _settings.Opacity;
+	}
+
+	public void Configure(RECT rect, string activationString, IReadOnlyList<RECT> occludingRects)
+	{
 		_rect = rect;
+		_activationString = activationString;
 		_occludingRects = occludingRects;
 
-		SetFormAppearanceAndPosition();
+		Size = new Size(
+			_rect.Right - _rect.Left - BORDER_MARGIN,
+			_rect.Bottom - _rect.Top - BORDER_MARGIN
+		);
+		Location = new Point(_rect.Left + BORDER_MARGIN / 2, _rect.Top + BORDER_MARGIN / 2);
 	}
 
 	protected override CreateParams CreateParams
@@ -34,22 +47,6 @@ public class OverlayForm : Form
 			cp.ExStyle |= 0x08000000; // WS_EX_NOACTIVATE 
 			return cp;
 		}
-	}
-
-	private void SetFormAppearanceAndPosition()
-	{
-		FormBorderStyle = FormBorderStyle.None;
-		StartPosition = FormStartPosition.Manual;
-		ShowInTaskbar = false;
-		TopMost = true;
-
-		BackColor = Color.Black;
-		Opacity = _settings.Opacity;
-		Size = new Size(
-			_rect.Right - _rect.Left - BORDER_MARGIN,
-			_rect.Bottom - _rect.Top - BORDER_MARGIN
-		);
-		Location = new Point(_rect.Left + BORDER_MARGIN / 2, _rect.Top + BORDER_MARGIN / 2);
 	}
 
 	protected override void OnPaint(PaintEventArgs e)

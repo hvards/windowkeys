@@ -14,7 +14,7 @@ public class Window
 
 	public void DismissOverlay()
 	{
-		OverlayForm?.Close();
+		OverlayForm?.Hide();
 		Dismissed = true;
 	}
 }
