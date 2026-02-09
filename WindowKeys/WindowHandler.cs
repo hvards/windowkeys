@@ -17,6 +17,7 @@ public partial class WindowHandler(
 	) : IWindowHandler
 {
 	private readonly OverlaySettings _overlaySettings = overlaySettings.Value;
+	private readonly List<OverlayForm> _overlayForms = [];
 	private List<Window> Windows { get; set; } = [];
 
 	public bool TestActivationString(string input)
@@ -51,6 +52,11 @@ public partial class WindowHandler(
 
 		var combinations = combinationGenerator.GetCombinations(Windows.Count);
 		var cIndex = 0;
+		var formIndex = 0;
+
+		// Add new forms if required
+		while (_overlayForms.Count < Windows.Count)
+			_overlayForms.Add(new OverlayForm(_overlaySettings, geometry));
 
 		foreach (var win in Windows
 					 .OrderBy(x => x.Rect.Left)
@@ -63,9 +69,11 @@ public partial class WindowHandler(
 
 			var occludingRects = GetOccludingRects(win, Windows);
 
-			win.OverlayForm = new OverlayForm(win.Rect, win.ActivationString, _overlaySettings, geometry, occludingRects);
-			win.OverlayForm.Show();
-			nativeHelper.ZOrderInsertWindowAfter(win.OverlayForm.Handle, win.InsertAfter);
+			var form = _overlayForms[formIndex++];
+			form.Configure(win.Rect, win.ActivationString, occludingRects);
+			win.OverlayForm = form;
+			form.Show();
+			nativeHelper.ZOrderInsertWindowAfter(form.Handle, win.InsertAfter);
 		}
 
 		if (sw.Elapsed.TotalMilliseconds > 200)
