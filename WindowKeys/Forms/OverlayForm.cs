@@ -22,6 +22,7 @@ public class OverlayForm : Form
 		FormBorderStyle = FormBorderStyle.None;
 		StartPosition = FormStartPosition.Manual;
 		ShowInTaskbar = false;
+		TopMost = true;
 		BackColor = Color.Black;
 		Opacity = _settings.Opacity;
 	}

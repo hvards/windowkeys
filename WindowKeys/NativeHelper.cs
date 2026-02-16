@@ -59,11 +59,12 @@ public partial class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 		var sw = Stopwatch.StartNew();
 		var visibleWindows = new List<Window>();
 		var nexthWnd = GetTopWindow(nint.Zero);
-		var prevhWnd = nint.Zero;
+		var hWnd = nint.Zero;
 
 		while (nexthWnd != nint.Zero)
 		{
-			var hWnd = nexthWnd;
+			var prevhWnd = hWnd;
+			hWnd = nexthWnd;
 			nexthWnd = GetWindow(hWnd, GW_HWNDNEXT);
 
 			var title = GetWindowTitle(hWnd);
@@ -74,7 +75,6 @@ public partial class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 			if (visibleWindows.Any(x => Geometry.IsRectInside(x.Rect, rect))) continue;
 
 			visibleWindows.Add(new Window { Rect = rect, Handle = hWnd, InsertAfter = prevhWnd });
-			prevhWnd = hWnd;
 		}
 
 		if (sw.ElapsedMilliseconds > 100)
