@@ -38,6 +38,7 @@ public class OverlayForm : Form
 			_rect.Bottom - _rect.Top - BORDER_MARGIN
 		);
 		Location = new Point(_rect.Left + BORDER_MARGIN / 2, _rect.Top + BORDER_MARGIN / 2);
+		Invalidate();
 	}
 
 	protected override CreateParams CreateParams
