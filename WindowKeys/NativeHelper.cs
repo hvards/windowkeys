@@ -48,12 +48,6 @@ public partial class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 		_ = SetWindowPos(windowHandle, hWndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 	}
 
-	public bool IsWindowAtPosition(nint windowHandle, int x, int y)
-	{
-		var point = new Point(x, y);
-		return WindowFromPoint(point) == windowHandle;
-	}
-
 	public List<Window> GetWindowsInZOrder()
 	{
 		var sw = Stopwatch.StartNew();
@@ -88,14 +82,8 @@ public partial class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 	private static void SendKeyboardInput(Input[] kbInputs) =>
 		_ = SendInput((uint)kbInputs.Length, kbInputs, Marshal.SizeOf<Input>());
 
-	private static Input[] GetKeyboardInputArr(ushort vk, ushort modifier = 0, nint? action = null) => action == null
-		? modifier == 0
-			? [GetKeyboardInput(vk, true), GetKeyboardInput(vk, false)]
-			:
-			[
-				GetKeyboardInput(modifier, true), GetKeyboardInput(vk, true), GetKeyboardInput(vk, false),
-				GetKeyboardInput(modifier, false)
-			]
+	private static Input[] GetKeyboardInputArr(ushort vk, nint? action = null) => action == null
+		? [GetKeyboardInput(vk, true), GetKeyboardInput(vk, false)]
 		: [GetKeyboardInput(vk, (int)action == (int)WM_KEYDOWN)];
 
 	private static Input GetKeyboardInput(ushort vk, bool down) => new()
@@ -181,9 +169,6 @@ public partial class NativeHelper(ILogger<INativeHelper> logger) : INativeHelper
 	[return: MarshalAs(UnmanagedType.Bool)]
 	private static partial bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy,
 		uint uFlags);
-
-	[DllImport("user32.dll")]
-	private static extern IntPtr WindowFromPoint(Point p);
 
 	[LibraryImport("kernel32.dll", EntryPoint = "GetModuleHandleW", StringMarshalling = StringMarshalling.Utf16)]
 	private static partial nint GetModuleHandle(string lpModuleName);
