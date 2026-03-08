@@ -20,7 +20,13 @@ public class WindowHandlerTests
 		_nativeHelper = new Mock<INativeHelper>();
 		_combinationGenerator = new Mock<ICombinationGenerator>();
 		_geometry = new Mock<IGeometry>();
-		var settings = new OverlaySettings();
+		var settings = new OverlaySettings()
+		{
+			FontFamily = "Arial",
+			FontSize = 12,
+			BackgroundColor = "#111111",
+			BorderColor = "#222222"
+		};
 
 		_subject = new WindowHandler(_nativeHelper.Object, _combinationGenerator.Object, _geometry.Object,
 			new NullLogger<WindowHandler>(), Options.Create(settings));
